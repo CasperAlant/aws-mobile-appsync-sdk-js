@@ -7,16 +7,23 @@ See the License for the specific language governing permissions and limitations 
 */
 global.Buffer = global.Buffer || require('buffer').Buffer; // Required for aws sigv4 signing
 
-var url = require('url'),
-    crypto = require('aws-sdk/global').util.crypto;
+var url = require('url');
 
-var encrypt = function (key, src, encoding = '') {
-    return crypto.lib.createHmac('sha256', key).update(src, 'utf8').digest(encoding);
+import { Sha256 } from '@aws-crypto/sha256-js';
+
+var encrypt = function (key, src) {
+    var sha256 = new Sha256(key);
+    sha256.update(src);
+    var encryptedUInt8Array = sha256.digestSync();
+    return new TextDecoder('utf-8').decode(encryptedUInt8Array);
 };
 
 var hash = function (src) {
     src = src || '';
-    return crypto.createHash('sha256').update(src, 'utf8').digest('hex');
+    var sha256 = new Sha256();
+    sha256.update(src);
+    var hashUInt8Array = sha256.digestSync();
+    return new TextDecoder('utf-8').decode(hashUInt8Array);
 };
 
 /**
@@ -160,7 +167,7 @@ var get_signing_key = function (secret_key = '', d_str, service_info) {
 };
 
 var get_signature = function (signing_key, str_to_sign) {
-    return encrypt(signing_key, str_to_sign, 'hex');
+    return encrypt(signing_key, str_to_sign);
 };
 
 /**
