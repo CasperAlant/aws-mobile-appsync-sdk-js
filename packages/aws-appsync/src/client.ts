@@ -20,7 +20,7 @@ import { createStore, StoreOptions, DEFAULT_KEY_PREFIX } from './store';
 import { ApolloCache } from 'apollo-cache';
 import { AuthOptions, AuthLink, AUTH_TYPE } from 'aws-appsync-auth-link';
 import { createSubscriptionHandshakeLink } from 'aws-appsync-subscription-link';
-import { Credentials, CredentialsOptions } from 'aws-sdk/lib/credentials';
+import { Credentials } from '@aws-sdk/types';
 import { OperationDefinitionNode, DocumentNode } from 'graphql';
 import { passthroughLink } from './utils';
 import ConflictResolutionLink from './link/conflict-resolution-link';
@@ -33,9 +33,9 @@ import { PERMANENT_ERROR_KEY } from './link/retry-link';
 export { defaultDataIdFromObject };
 
 class CatchErrorLink extends ApolloLink {
-    
+
     private link: ApolloLink;
-    
+
     constructor(linkGenerator: () => ApolloLink) {
         try {
             super();
@@ -135,7 +135,7 @@ const createLinkWithStore = (createLinkFunc = (store: Store<OfflineCacheType>) =
     });
 }
 
-type CredentialsGetter = () => (Credentials | CredentialsOptions | Promise<Credentials> | Promise<CredentialsOptions> | null) | Credentials | CredentialsOptions | Promise<Credentials> | Promise<CredentialsOptions> | null;
+type CredentialsGetter = () => (Credentials | Promise<Credentials> | null) | Credentials | Promise<Credentials> | null;
 
 export interface AWSAppSyncClientOptions {
     url: string,

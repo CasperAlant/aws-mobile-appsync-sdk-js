@@ -2,7 +2,7 @@
  * Copyright 2017-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
  */
-import * as S3 from 'aws-sdk/clients/s3';
+import { S3 } from '@aws-sdk/client-s3';
 
 export default (fileField, { credentials }) => {
     const {
@@ -18,10 +18,10 @@ export default (fileField, { credentials }) => {
         region,
     });
 
-    return s3.upload({
+    return s3.putObject({
         Bucket,
         Key,
         Body,
         ContentType,
-    }).promise();
+    });
 };
